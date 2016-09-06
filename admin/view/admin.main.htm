@@ -1,0 +1,22 @@
+<?
+$view = $_GET['view'];
+if(!$view) 
+{  $view='default';
+	 $_GET['view'] =$view;
+	  
+}
+$viewpath = "admin.$view.htm";
+
+$html_root = "view/";
+
+ 
+
+if(is_file($html_root.$viewpath))
+{ 
+	
+	require_once($viewpath );
+	
+}
+else
+ echo "界面未完工 (后台自动升级)" ;//.$html_root.$viewpath;
+?>

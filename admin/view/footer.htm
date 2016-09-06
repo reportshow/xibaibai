@@ -1,0 +1,182 @@
+ 
+
+<div style='clear:both;height:100px'> </div>
+ 
+  
+  <div id="yesnobox" class='floatBox'  style='position:fixed;display:none' >
+    <div class=frm>    	
+    	<div class=title ><div class=close onclick="$('#yesnobox').hide();">X</div> 确认消息  </div>    	
+      <div class=content>
+      	 <div id=yesno_msg>xxxx</div>
+      	 <div style='position:absolute;bottom:20px;text-align:center;width:350px;margin:0px auto;'>
+      	 	<input type=button  id=yesno_yes value='确定'><input type=button   id=yesno_no value='取消'>
+      	 	
+      	 </div>
+      </div>
+    </div>
+  </div>
+
+  <div id=flybox class='floatBox' style='display:none;bottom:200px'>
+   <div class=msgbody style='text-align:center'> </div>
+  </div>
+
+
+<script defer>
+	
+	
+	$(document).ready(function(){
+		<?
+		 if($alertmsg){
+		    echo "flymsg('$alertmsg');";
+		 }
+		?>
+		
+	});
+	
+	var lastEV; var lastPosY;
+	function setlastpos(){
+		lastEV=  window.event; 
+	}
+	
+	function waiting(){
+		   $('#flybox .msgbody').html("<img src=view/imgs/wait.gif> 处理中...");
+		   $('#flybox .msgbody').css('padding','5px');
+			$("#flybox").stop(true);
+			$("#flybox").show();
+	}
+	function flymsg(msg){
+		$('#flybox .msgbody').html(msg);
+		$("#flybox").stop(true);
+		$("#flybox").show();
+		 
+		$("#flybox").animate({opacity:"1"},1000, function(){$("#flybox").delay(2000).hide(500);}); 
+	}
+		function flymsg2(msg,obj,callback){
+		$('#flybox .msgbody').html(msg);
+		 $("#flybox").show();
+		$("#flybox").css('opacity','0.2');
+		$("#flybox").animate({opacity:"1"},1000, function(){$("#flybox").delay(2000).hide(500);if(callback)callback();}); 
+	}
+	
+	$('#flybox').click(function(){
+	  $(this).hide('slow');	
+		
+	});
+	
+	function showyesno(msg,yes,no){
+	  $('#yesno_msg').html(msg);
+		$('#yesnobox').css('display','block');
+		pos = mouseCoords();
+		//$('#yesnobox').css('margin-top',(pos.y-300)+'px');
+		
+		$('#yesno_yes').click(function(){   
+		 	 $('#yesnobox').hide();
+		 	 if(typeof(yes)!='undefined') {yes()};
+			 			
+		});
+		$('#yesno_no').click(function(){
+			$('#yesnobox').hide();	
+		  if(typeof(no)!='undefined') {no();};		
+		});		
+	  
+	} 
+
+   function callhostfunc(param){
+ 	 	   url = param.url;
+ 	 	   callback = param.callback;
+ 	 	   
+ 	 	   var returndata;
+ 	 	   if(typeof(callback)=='undefined')
+ 	 	     async = false;
+ 	 	   else
+ 	 	   	 async = true;
+ 	 	   	  	  
+ 	 	   urlx = encodeURI(url);
+ 	 	  
+		   $.ajax({ url:  urlx,  
+		      dataType:'json',
+		      async:async,
+			    success: function(json){        
+			     	  
+			     	   if(typeof(callback)=='undefined')
+			     		  returndata = json;
+			     		else
+			     			callback(json);	 
+		      },
+		      error: function (xml, errtxt, errobj){
+		      	 alert(errtxt);
+		      }
+		    });
+		    
+		 if(typeof(callback)=='undefined')   return returndata;
+		    
+ 	 }
+ 	 
+function mouseCoords() 
+{ 
+	ev=  window.event; 
+	var pos;
+	if(typeof(ev)=='undefined')
+	{  	alert(lastEV);
+	  if(lastEV)
+	  {
+	  	ev = lastEV;	  	
+	  }else{
+		   return{ 
+	      x:document.body.clientWidth/2 , 
+	      y:300 
+	    };
+	  } 
+  }
+ 
+ if(ev.type!='click' && lastEV){
+ 	 ev = lastEV;   
+  }
+ 
+ if(ev.pageX || ev.pageY){ 
+   lastEV = null;
+   return {x:ev.pageX, y:ev.pageY}; 
+ }  
+ 
+ lastEV = null;
+ return{  
+   x:  document.body.scrollLeft - document.body.clientLeft, 
+   y:  document.body.scrollTop - document.body.clientTop 
+ }; 
+ 
+  
+} 
+
+
+
+
+
+</script>
+
+
+<script type="text/javascript">
+	/*
+var IEver =0;
+var browser=navigator.appName;
+var b_version=navigator.appVersion;
+var version=b_version.split(";");
+//alert(navigator.appVersion);
+var trim_Version=version[1].replace(/[ ]/g,"");
+
+if(browser=="Microsoft Internet Explorer" )
+{
+    IEver =  trim_Version.substr(4,3);
+   //trim_Version=="MSIE6.0"){
+   //alert(ver);
+   	if(IEver < 9){
+   		
+   		// alert('请升级的浏览器到 IE9+');
+   		 
+   	}
+    
+}
+*/
+ 
+ 
+
+</script>

@@ -1,0 +1,86 @@
+<?
+
+$openid = $_SESSION['openid'];
+ 
+$filter = "openid='$openid'";;
+$user = db_read('user',$filter);
+
+require_once(ROOT . 'func/room.site.php');
+$usedrooms = $user['rooms'];
+$rooms = explode(',', $usedrooms);
+
+$orderid = $_GET['id'];
+echo "&nbsp;&nbsp;&nbsp;&nbsp;订单号: $orderid";
+echo "<ul class=group>";
+echo "<li class=header>曾经的位置</li>";
+foreach($rooms as $rm){
+	$rm=trim($rm);
+	if(!$rm) continue;
+	
+	$room = db_read('rooms', $rm);
+	$site = getSiteinfo($room['siteid']);
+	echo "<li><a href=# class='button btsel'   style='float:right;margin-right:10px;margin-top:-7px;'>选择</a>"
+	."<input type=radio  name=roomsel  value=$rm> "
+	 . $site['school'] . '/ '. $site['building'] . '楼 / '.$room['room']  .'室'
+	 . "</li>";
+	
+}
+
+/*
+$schoolname = $site['school'];  $GLOBALS['db_fields']='building';
+$filter = " school='$schoolname'  group by  building"; 
+$buildings = db_read_array('rooms',null,$filter);
+//echo '<pre>';var_dump($buildings);
+$buildtxt = '<select name=building>';
+foreach($buildings as $bld ){
+	$bltxt = $bld['building'];
+	$buildtxt .="<option value='$bltxt'>$bltxt</option>";
+};
+$buildtxt .= '</select>';
+*/
+
+$schoolname = $site['school'];  $GLOBALS['db_fields']='building';
+
+$filter = " school='$schoolname' "; 
+$sites = db_read('site',$filter,array());
+//echo '<pre>';var_dump($buildings);
+$buildtxt = '<select name=site>';
+foreach($sites as $id=> $st ){
+	$bltxt = $st['building'];
+	$buildtxt .="<option value='$id'>$bltxt</option>";
+};
+$buildtxt .= '</select>';
+
+echo "<li><a href=# class='button btsel'   style='float:right;margin-right:10px;;'>确定</a>"
+       ."<input type=radio  name=roomsel  value='-1'>其他 $buildtxt <input type=number  name=room  value='' style='width:60px'>室</li>";
+echo "</ul>";
+
+?>
+
+<script >
+	var curid = '<?=$orderid ?>';;
+	$('.btsel').click(function(){ 
+		$(this).parent().find('input[name=roomsel]').attr('checked', 'checked');
+		$(this).parent().find('input[name=roomsel]').change();
+	});
+	$('input[name=roomsel]').change(function(){
+		var newid = $(this).val();
+		
+		var room = $('input[name=room]').val();
+		var siteid = $('select[name=site]').val();
+		 siteid = escape(siteid);
+		 if(newid==-1 && room.length < 2){
+		   return;
+		 }
+		  
+		var urlx = "act.php?target=orders&func=changeaddr&id="+curid 
+		   +"&newroomid=" +newid +"&room=" + room
+		   +"&siteid=" + siteid;
+		$.ajax({ url:  urlx,   success: function(data){
+			// alert(data);
+            flymsg('修改完成');
+          
+       }});
+	});
+	
+</script >

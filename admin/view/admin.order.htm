@@ -1,0 +1,146 @@
+<?
+  
+require_once(ROOT.'func/db.keytxt.php');	
+require_once(ROOT.'func/room.site.php');	
+
+ $state = $_REQUEST['state'];
+  
+ $filter =  " state='" . $state . "'" ."  ORDER BY uid DESC";
+ 
+ 
+ 
+    $orders = db_read_array('orders',array(),$filter);
+    $stateTxt = $ORDER_STATE[$_REQUEST['state']];
+    
+	if($state=='copy')	
+	{   $actTxt = "批量收洗";
+		$tostate = 'washing';
+		$tonextstate = '收洗';
+    }
+	if($state=='washing')	{
+	  $actTxt = "批量标记为干净"; 	
+	  $tostate = 'clean';
+	  $tonextstate = '洗净';
+    }
+	if($state=='clean'){	
+	$actTxt = "批量派件"; 
+	$tostate = 'back';
+	$tonextstate = '派回';
+    }
+	
+	
+	if($actTxt)  $bigLinkHtml = "<a class='yellowbtn' style='float:left'  href='?win=index&view=order.changestate&tostate=$tostate'>$actTxt</a>";
+
+?>
+<div class=mycart>
+	<?=$bigLinkHtml ?>
+	<h2 style='text-align:center;width:800px;'><?=$stateTxt ?></h2>
+
+	<table width=100% >
+		<tr ><th width=6 style='border-left:1px solid #2cf;width:20px'><input type=checkbox></th>
+		<th width=50>id</th>
+		
+		<th width=120>学校</th>
+		<th width=60>楼栋</th>
+		<th width=60>房间</th>
+		<th width=100>用户</th>
+		<th width=160>电话</th> 
+		<th width=60  style='border-left:2px solid #2cf;'>物流</th> 
+		<th width=100>物流电话</th> 
+		<th   style='border-right:1px solid #2cf'>操作</th></tr>
+	<?
+	
+	if(count($orders) > 0) 
+	{
+	  foreach($orders as $orderid => $ord)
+	  {
+	  	   $userid = $ord['userid'];
+	  	   $user = db_read('user',$userid); 
+	  	   $name = $user['name'];
+	  	   $tel = $user['tel'];
+	  	   
+	  	   $roomid =  $ord['roomid'];
+	  	   $roominfo = db_read('rooms', trim($roomid)); 
+	  	   $room = $roominfo['room']; 
+	  	   $site = db_read('site', $roominfo['siteid']); 
+	  	   
+	  	   $school = $site['school'];
+	  	   $building = $site['building'];
+	  	   
+	  	   
+	  	   $worker = getworkerinfo($ord['workerid']);	  	   
+	  	   $workername = $worker['name'];
+	  	   $workertel = $worker['tel'];
+	  	   
+	  	   $optHtml = '';
+	  	  if($tonextstate) $optHtml = " <span class='yellowbtn  tonextbtn'  ordid ='$orderid'  tostate='$tostate'  >$tonextstate</span>";
+	  	   
+		?>
+		
+		<tr id=tr_<?=$orderid ?> ><td><input type=checkbox></td>
+		    <td><?=$orderid ?></td>
+			
+		    <td><?=$school ?></td>
+		    <td><?=$building ?></td>
+		    <td><?=$room ?></td>
+		    <td><?=$name ?></td>
+		    <td><?=$tel ?></td>
+		    
+		     <td style='border-left:2px solid #2cf;'><?=$workername ?></td>
+		     <td><?=$workertel ?></td>
+		     <td><?=$optHtml  ?> </td>
+	 </tr>
+<?
+	} // for
+	
+	 
+?>	
+	
+	  </table>	
+	  <div class=cartbottom>总计:&nbsp;<span class=total>--</span> </div>
+	<?
+   }
+
+	if(count($orders) < 1) echo ' </table>	<h1> 暂无记录</h1>'; 
+	
+	?>
+	
+</div>
+
+ 
+
+ 
+
+
+<script defer>
+ 
+
+$('.tonextbtn').click(function(){
+ 	 var thisobj =  $(this);
+	 var ordid = $(this).attr('ordid');
+	 if(ordid.length < 1) return;
+	 waiting();
+	 var tostate = $(this).attr('tostate');
+	 var urlx = '../act.php?target=pushupdate&func=pushstate&orderid='+ordid+'&state=' +tostate ;
+	 
+	 $.ajax({ url: urlx, success: function(data){
+       if(data.indexOf('push') > 0)
+       { flymsg('改变状态' + tostate);
+       	 thisobj.attr('disabled', true);
+       	 thisobj.css('background', '#999');
+       	 thisobj.attr('ordid', '');
+       }else{
+       	flymsg('改变状态失败');
+       }
+
+      }});
+
+
+});
+
+ 
+ 
+
+ 
+
+</script>

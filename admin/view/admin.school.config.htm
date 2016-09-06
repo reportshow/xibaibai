@@ -1,0 +1,91 @@
+<?
+$school = $_GET['school'];
+
+if($_GET['dofunc']=='addnew'){
+	$newsite['school']=$_POST['school'];
+	$newsite['building']=$_POST['building'];
+	db_write('site', $newsite);
+	
+	$alertmsg =$_POST['building']." 添加成功";
+}
+
+$filter = " school='$school' "; 
+$sites = db_read('site',$filter,array());
+
+
+
+?>
+<?
+require_once('head.inc.htm');
+?>
+
+<DIV class=adminmainbox style='min-height:inherit'>
+	<b style='font-weight:bold'><?=$school?></b> 
+ 
+<table id=buildingsbox   width=600 style='margin-bottom:5px'>
+	<tr><th></th><th width=150>学校</th><th width=60>楼栋</th><th width=80>工人</th><th width=420>操作</th></tr>
+	<?	foreach($sites as $st){  
+	   $buildingNo = $st['building'];
+	   $sid = $st['uid'];
+	   
+	   $worker = db_read('worker', $st['workerid']);
+       $workerloginid = $worker['id'];
+	?>
+	<tr>
+		<td><?=$sid ?></td>
+		<td  style='padding-left:10px'> <?=$school   ?> </td>
+		<td  ><input type=text value='<?=$buildingNo   ?>'  style='border:0px;width:60px;'></td>
+		<td><input type=text value='<?=$workerloginid ?>' name=workloginid   sid='<?=$sid ?>'  style='border:0px;width:60px; border-bottom:1px solid #5ae;'> </td>
+		<td  >
+			 <a class=bluebtn  href='?win=index&view=rooms&siteid=<?=$sid?>'  target=_top>查看宿舍</a>
+			 <a class=bluebtn  href='?win=admin.site.allqrcode&siteid=<?=$sid?>'  target=_top>全部二维码</a>
+		</td>
+	</tr>
+	 <?	}?>
+</table>
+<form action='?win=admin.school.config&dofunc=addnew&school=<?=$school   ?>' method=post>
+	<input type=hidden name=school value='<?=$school   ?>'>
+楼号: <input type=text name='building' style='width:150px;box-sizing:content-box'><input type=submit value='添加'>
+</form>
+</DIV>
+
+  
+  
+  <script>
+
+  	
+ $(function(){
+  
+	   String.prototype.trim = function() {
+		  return this.replace(/^\s+/, '').replace(/\s+$/, '');
+		}
+	  	
+	  	$('input[name=workloginid]').blur(function(){	  		 
+	  		 var siteid = $(this).attr('sid');
+	  		 var workerloginid =  $(this).val();
+	  		 workerloginid = workerloginid.trim();
+	  		 
+	  		 if(workerloginid.length < 2) return;
+	  		 
+	  		waiting();
+		
+		
+	  		var urlx = 'index.php?act=site&func=saveworker&siteid='+siteid + '&workerloginid='+workerloginid;
+	  		$.ajax({ url:  urlx,  success: function(data){
+	             var js;
+	              eval("js = "+data);
+	              flymsg(js.msgtext); 
+	             if(json.state =='ok')
+	                flymsg('修改完成');
+	             else
+	             	 flymsg(json.msgtext);
+	          
+	       }});
+	  		
+	  	});
+ 	
+});
+   </script>
+   <?
+   require_once('footer.htm');
+   ?>

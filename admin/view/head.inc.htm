@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta http-equiv=Content-Type content="text/html;charset=utf-8">
+		<link href="view/index.css" type=text/css rel=stylesheet>
+        <script src="view/jquery-1.4.4.min.js"></script>
+       <title>管理</title>
+	</head>
+<body>
+	<?
+	 
+	$browser = ($_SERVER['HTTP_USER_AGENT']);
+	$p = strpos($browser , 'MSIE');
+	if($p > 0){
+		$p+=4;
+		$p2 = strpos($browser, ';' , $p);
+		
+		$IEver = trim(substr($browser, $p,$p2-$p));
+		
+		if( $IEver < 9){
+		   exit("<br><h1>请升级你的浏览器到 IE9+</h1>");	
+		}
+	}
+	
+	?>

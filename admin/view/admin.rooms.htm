@@ -1,0 +1,62 @@
+<?
+  require_once(ROOT.'public/weixin/weixin.func.php');
+  require_once(ROOT.'func/room.site.php');
+  
+  if($_GET['dofunc']=='addnew'){
+	$newroom['siteid']=$_POST['siteid'];
+	$newroom['room']=$_POST['room'];
+	db_write('rooms', $newroom);
+	
+	$alertmsg =$_POST['room']." 添加成功";
+}
+
+  $site = db_read('site',$_GET['siteid']);
+  
+  $filter = 'siteid='.$_GET['siteid']; 
+  $rooms = db_read('rooms',$filter,array());
+
+?>
+<span class=bluebtn href='#'  onclick='history.back();'>返回</span>
+<?= $site['school']?> / <?= $site['building']?> 楼
+<table width=1000>
+	<tr><th width=60> </th><th>名称</th><th width=200>设置</th></tr>
+   <?
+   $j=0;
+   foreach($rooms as $rid => $room)
+   {   	 
+   	   $imgurl = getQRlink($room); 
+  
+   ?><tr><td align=center><?=$rid ?></td><td>&nbsp;<?=$room['room'] ?>室</td>
+   	<td align=center>
+   		<a class=yellowbtn href='#'  target=setfrm>设置</a>
+   		<input type=button class='bluebtn showqr' value='查看二维码'  QRimg='<?=$imgurl ?>'  QRaddr = '<?=$room['room'] ?>'>
+   	</td></tr>
+
+<?}
+?>
+</table>
+<br> 
+
+<form action='?win=index&view=rooms&dofunc=addnew&siteid=<?=$_GET['siteid']   ?>'  method=post>
+	<input type=hidden name=siteid value='<?=$_GET['siteid']  ?>'>
+新建房间: <input type=text name='room' style='width:150px;box-sizing:content-box'><input type=submit value='添加'>
+</form>
+
+<script>
+   
+  	$('.showqr').click(function(){
+  		
+		$("#flybox").stop(true);
+		$("#flybox").show();
+		
+  		var qrimg=$(this).attr('QRimg'); 
+  		var addr = $(this).attr('QRaddr'); 
+  		 var msg ="<b style='color:#fff'>" +addr+'室</b>'
+  		              + "<br><img src='"+qrimg+"' height=300px>";
+  		  
+    		 $('#flybox .msgbody').css('padding','10px'); 
+  		$('#flybox .msgbody').html(msg); 
+  		
+  	});
+ 
+</script>

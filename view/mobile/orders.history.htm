@@ -1,0 +1,84 @@
+<?
+ 
+$user = getuser();
+$userid = $user['uid'];
+
+
+ //define('SQLITE_DEBUG', 1);
+
+ 
+    $filter = "userid = $userid  order by uid DESC ";
+    $orders = db_read('orders', $filter, array());
+  
+if(count($orders) < 2){
+	  errmsg('没有历史订单信息...');
+}
+
+foreach($orders as $order){
+$orderid = $order['uid'];
+if($order['state'] =='create')  $order['count'] ='未知';
+
+$create_time = date('Y-m-d H:i', $order['create_time']) ;
+
+$copy_time     =$order['copy_time']> 100 ? date('Y-m-d H:i', $order['copy_time'])  : '0:0:0';
+$towash_time =$order['towash_time']  > 100 ? date('Y-m-d H:i', $order['towash_time'])  : '0:0:0';
+
+require_once(ROOT.'func/db.keytxt.php'); 
+$state = $ORDER_STATE[$order['state']] ;
+
+$worker = db_read('worker', $order['workerid']);
+
+$detailurl = '?win=orders&sub=current&orderid='.$orderid;
+?> 
+<div class=orderbox>
+ <ul class=group  oid='<?=$orderid ?>' > 
+ <li class=header><s class=close  oid='<?=$orderid ?>'  ></s>订单号:<?=$orderid ?></li> 
+ <li >衣物件数:  <?=$order['count']  ?> </li>  
+ <li >创建时间:  <?=$create_time ?> </li> 
+ <li >金额:  <?=$order['paid'] ?>元 </li>  
+ <li >状态:  <span class=backHL><?=$state ?></span><a href='<?=$detailurl ?>' style='float:right; margin-right:10px;'>详情</a> </li> 
+ </ul> 
+ 
+ 
+ <?
+} //for
+
+
+ function errmsg($errmsg){
+ 	
+ 	echo "  <ul class=group> 
+   <li class=reder>错误</li>
+   <li >$errmsg</li> 
+   </ul> ";
+ 
+ 	exit;
+ }
+ 
+ ?>
+</div>
+
+
+
+<script>
+		$('s.close').click(function(){
+			
+			if(!confirm('是否删除本记录')){
+       	       return;
+       	    }
+		 var oid = $(this).attr('oid');		 
+       
+		var url = "act.php?target=orders&func=remove&id="+oid;
+		   
+		 $.ajax({ url: url,  success: function(data){
+                if(data.indexOf('[OK]') > 0)
+                { $('ul[oid='+oid+']').slideUp('slow', function(){
+              	     $(this).remove();
+                  });
+               }
+         }});
+         
+         
+         
+	});
+	 
+</script>	

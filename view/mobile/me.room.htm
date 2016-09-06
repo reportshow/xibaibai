@@ -1,0 +1,83 @@
+ <style> p{padding-left:10px}</style> 
+ <?
+
+$openid = $_SESSION['openid'];
+ 
+
+ 
+if($_GET['step'] == 'done'){
+	$roomid = $_GET['roomid'];
+	 require_once('act/wx.event.php');
+	 $user = userUpdate($roomid);
+	 ?>
+	 <ul class=group>
+     <li class=header>宿舍</li>
+	 <?
+	 $address = addressByroomid($roomid);
+	 echo "<li>您的新地址为: <br> <span class=button>$address</span></li>";
+}
+ 
+if(!$_GET['step'] OR  $_GET['step']=='1')
+{
+	require_once('admin/data/school.php');	
+?>
+ 
+<ul class=group>
+ <li class=header>请选择你的学校</li>	
+ <? foreach($SCHOOL_NAMES as $school){ 
+ 	$url = '?win=me&sub=room&step=2&school='.urlencode($school); 
+ 	echo  "<li> <a   class=button href='$url'>$school </a></li>";
+    }
+}  //step1
+
+if($_GET['step']=='2')
+{
+	 ?><ul class=group>
+        <li class=header>请选择您所在楼栋</li>	
+	 <?
+    $school = $_GET['school'];
+    $filter = " school='$school' "; 
+     echo "<li>$school </li>";
+     
+    $sites = db_read('site',$filter,array());
+    if(count($sites) < 1){
+    	 echo '<li>没有楼栋信息</li>';
+    }else
+    foreach($sites as $st){  
+	   $buildingNo = $st['building'];
+	   $sid = $st['uid'];
+	   $url = "?win=me&sub=room&step=3&siteid=$sid&sitename=".urlencode($buildingNo)."&school=".urlencode($school);
+       echo  "<li> <a   class=button href='$url'>$buildingNo 楼</a></li>";
+     }
+}
+
+if($_GET['step']=='3')
+{
+	 ?><ul class=group>
+        <li class=header>请选择您的宿舍</li>	
+	 <?
+    $filter = 'siteid='.$_GET['siteid']; 
+     $rooms = db_read('rooms',$filter,array());
+  $buildingName = $_GET['school'] .' / '. $_GET['sitename'] .' 楼';
+   echo "<li>$buildingName </li>";
+   
+    if(count($rooms) < 1){
+    	 echo '<li>没有宿舍信息</li>';
+    }else
+    foreach($rooms as $rid => $room){  
+	   $name = $room['room'];
+	    
+	   $url = "?win=me&sub=room&step=done&roomid=$rid";
+       echo  "<li> <a   class=button href='$url'>$name 室</a></li>";
+     }
+}
+
+ ?>
+
+ 
+ <br>
+	<center><input type=button class=button value='      上一步      ' onclick="history.back();">  </center>
+  <br>
+  </ul>
+ 
+ 

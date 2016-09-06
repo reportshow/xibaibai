@@ -1,0 +1,59 @@
+<?
+require_once('head.inc.htm');
+
+ require_once(ROOT.'public/weixin/weixin.func.php');
+require_once(ROOT.'func/room.site.php');
+  
+  
+  $site = db_read('site',$_GET['siteid']);
+   $school =  $site['school'];
+   $building= $site['building'];
+  $filter = 'siteid='.$_GET['siteid']; 
+  $rooms = db_read('rooms',$filter,array());
+
+?>
+<span type=button class='yellowbtn' style='padding:5px 15px;font-size:14px  ;margin-top:-0px'  id='printwindow'>打印 </span>
+
+<span class=bluebtn href='#'  onclick='history.back();'>返回</span>
+<br><br>
+<div style='background:#2ce;color:#fff;padding:5px 10px;'>
+<?= $site['school']?> / <?= $site['building']?> 楼
+</div>
+<style>
+	.box{
+	background: url(view/imgs/fff.jpg) repeat;
+	
+	}
+</style>
+<ul style='margin-left:10px'>
+	 
+   <?
+   $j=0;
+   if(count($rooms)){
+   foreach($rooms as $id => $room){
+   	 
+   	 $imgurl = getQRlink($room); 
+   	 
+   	 $address =  "$school <br>$building / ".$room['room']  ;
+   	 ?><li style='height:230px;width:180px;margin:10px; padding-bottom:10px; text-align:center;border-bottom:1px dashed #ccc'>
+   	  <div   style='height:180px;width:180px;;overflow-x:visible;white-space:nowrap;;'>
+   	  	  <div style='text-align:right;display:block;color:#aaa;font-size: 9pt;'>NO. <?=$id?></div>
+   	  	  <div><img src='<?=$imgurl?>' width=160>
+          <br><?=$address?> 
+         </div>
+     </div>
+        <div style='margin-top:-100px;margin-left:70px;height:30px;width:30px;z-index:9999;position: relative;'>
+     	  <img src=view/imgs/logo.png width=30>
+     	</div>
+   	 </li> 
+   <?
+   }
+ }else{
+ 	 echo "<h1>暂无记录</h1>";
+ }
+?>
+</ul>
+<br> 
+
+<iframe name=setfrm src='about:blank' width=100% height=500 Frameborder=0></iframe>
+ 

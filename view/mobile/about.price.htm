@@ -1,0 +1,15 @@
+<?
+  require_once(ROOT."func/db.keytxt.php");
+  
+  echo '<ul class=group>';
+  foreach($YIFU_TYPES as $yifu){
+  	  	  if($yifu['price'] < 0.01){
+  	  	    continue;   
+  	  	  }
+  	  	  $title = $yifu['title'];
+  	  	   $price = $yifu['price'];
+  	  	 echo "<LI style='font-size:14pt'><span style='width:140px;display:inline-block'>$title</span>  <span style='color:#0c0'>$price</span>元 </LI>"; 
+  	   
+  }
+  
+  echo '</ul>';

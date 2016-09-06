@@ -1,0 +1,19 @@
+<?
+require_once('data/school.php');
+
+?><table width=1000>
+	<tr><th width=60>NO.</th><th>名称</th><th width=100>设置楼栋</th></tr>
+   <?
+   $j=0;
+   foreach($SCHOOL_NAMES as $school){
+   	$j++
+   ?><tr><td align=center><?=$j ?></td><td>&nbsp;<?=$school ?></td>
+   	<td align=center><a class=yellowbtn href='?win=admin.school.config&school=<?=$school ?>'  target=setfrm>设置</a></td></tr>
+
+<?}
+?>
+</table>
+<br> 
+
+<iframe name=setfrm src='about:blank' width=100% height=500 Frameborder=0></iframe>
+ 

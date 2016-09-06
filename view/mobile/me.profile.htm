@@ -1,0 +1,55 @@
+<?
+
+$openid = $_SESSION['openid'];
+ 
+$filter = "openid='$openid'";;
+$user = db_read('user',$filter);
+ 
+ 
+if($_GET['formact']=='saveprofile' && $openid)
+{   if(!$user['openid']) $user['openid'] = $_SESSION['openid'];
+	$user['name'] = $_POST['name'];
+	$user['tel'] = $_POST['tel'];
+	 
+	 db_write('user',$user);
+	$alertmsg = '保存完毕';
+}
+
+$room = db_read('rooms', $user['roomid']);
+require_once(ROOT.'func/room.site.php');
+ $site = getSiteinfo($room['siteid']);
+$address = $site['school'] . '/'.$site['building'] .'号楼/'. $room['room'] .'室';
+
+?>
+ 
+
+ 
+ <style> p{padding-left:10px}</style>
+ 
+<ul class=group>
+	<li class=header>我的余额</li>
+	<li >
+		<span class=tag>我的余额：</span><b style='color:green'> <?=$user['dot']  ?></b>元
+	</li>
+</ul>
+
+
+<form action='?win=me&sub=profile&formact=saveprofile' method=post>
+	<input type=hidden name=openid value='<?=$openid ?>'>
+<ul class=group>
+ <li class=header>个人资料</li>	
+<li>
+ <span class=tag>姓名称呼：</span><input type=text  style='width:80px'  name=name value='<?=$user['name'] ?>'  max-length=5>	 
+ </li>
+<li><span class=tag>联系电话：</span><input type=number   name=tel value='<?=$user['tel'] ?>'>
+  </li>
+ <li><span class=tag>常用地址：</span> <?=$address  ?> <a  class=button href='?win=me&sub=room&step=1'>修改</a>
+  </li> 
+ <br>
+	<center><input type=submit class=button value='       保  存      '>  </center>
+  <br>
+  </ul>
+</form>
+<center>我的二维码<br>
+<img src='func/QR.php?QR=<?=$user['openid'] ?>'>
+</center>

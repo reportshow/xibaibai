@@ -1,0 +1,99 @@
+<?
+ //define('SQLITE_DEBUG', 1);
+$copyedTxt = db_count('orders',  "state='copy'" );
+ 
+$washingTxt = db_count('orders',  "state='washing'" );
+$cleanTxt= db_count('orders',  "state='clean'" );
+
+$view = $_REQUEST['view'];
+ 
+$viewlist = array('order'=>'order,data',
+          'goods'=>'goods,new',
+          'school'=>'school,weibo',
+          'customer'=>'customer',
+          'setting'=>'shop,site,links,shuoming',
+          'advance'=>'admin,restore,alipay,ship,shipnames');
+
+$viewT = $view ; 
+$p = strpos($view,'.');
+if($p > 0) $viewT = substr($view,0,$p);
+foreach($viewlist as $k => $v){
+	if(strpos('=='.$v, $viewT) >0) 
+	{
+		$showme[$k]='1';
+		$showmeTxt[$k]=" style='display:block'";
+	}
+	
+}
+
+?><div class='topleftmenu' style='padding-top:5px;'>
+	
+	admin &nbsp;<a href=act.php?target=auth&act=logout>退出</a>
+	<div class=tag tag='order' isshow='<?=($showme['order']+0)?>'>订单管理</div>
+	<ul tag='order' <?=$showmeTxt['order'] ?> >
+		<li><a  href='?win=index&view=order&state=create'>待收件</a></li>
+		<li><a  href='?win=index&view=order&state=copy' class=act>待入店</a> <b style='color:#e50'><?=$copyedTxt?></b></li>
+		<li><a  href='?win=index&view=order&state=washing'>清洗中</a> <b style='color:#e50'><?=$washingTxt?></b></li>
+		<li><a  href='?win=index&view=order&state=clean'>清洗完成</a> <b style='color:#e50'><?=$cleanTxt?></b></li>
+		<li><a  href='?win=index&view=order&state=back'>派送中</a></li>
+		<li><a  href='?win=index&view=order&state=done'>完成</a></li>
+		<li><a  href='?win=index&view=data'>交易报表</a></li>
+  </ul>	
+  	<div class=tag tag='goods' isshow='<?=($showme['goods']+0)?>'>洗店管理</div>
+  <ul tag='goods'  <?=$showmeTxt['goods'] ?>>
+		<li><a  href='?win=index&view=new'>添加洗店</a></li>
+		<li><a  href='?win=index&view=taobaoimport'  >洗店人员</a></li>
+		<li><a  href='?win=index&view=goods&pos=1'  >账目清单</a></li> 		
+		<li><a  href='?win=index&view=class'>分类管理</a></li>		
+  </ul>	
+  	
+  <div class=tag tag='school' isshow='<?=($showme['school']+0)?>'>学校管理</div>
+   <ul tag='school'  <?=$showmeTxt['school'] ?>>
+		<li><a  href='?win=index&view=school'>学校管理</a></li>
+		<li><a  href='?win=index&view=school'>宿舍管理</a></li>
+		<li><a  href='?win=index&view=article' >物流管理</a></li> 
+  </ul>	
+  <div class=tag tag='customer' isshow='<?=($showme['customer']+0)?>'>物流管理</div>
+  <ul tag='customer'  <?=$showmeTxt['customer'] ?>>
+		<li><a  href='?win=index&view=customer' >物流资料</a></li>  		
+		<li><a  href='?win=index&view=customer.ads'>工资结算</a></li>
+		<li><a  href='?win=index&view=customer.pushSMS'>历史业绩</a></li>
+  </ul>	
+    <div class=tag tag='school' isshow='<?=($showme['school']+0)?>'>用户管理</div>
+   <ul tag='school'  <?=$showmeTxt['school'] ?>>
+		<li><a  href='?win=index&view=school'>用户资料</a></li>
+		<li><a  href='?win=index&view=school.room'>广告推送</a></li>
+		<li><a  href='?win=index&view=article' >订单分析</a></li> 
+  </ul>	
+     <div class=tag  tag='setting' isshow='<?=($showme['setting']+0)?>'>系统设置</div>
+   <ul   tag='setting'  <?=$showmeTxt['setting'] ?> >
+		<li><a  href='?win=index&view=shop'>常规设置</a></li> 
+		<li><a  href='?win=index&view=shop.ads'>xx设置</a></li>  
+		<li><a  href='?win=index&view=shuoming'>细则说明</a></li>
+  </ul>	
+  
+  <div class=tag   tag='advance' isshow='<?=($showme['advance']+0)?>'>高级设置</div>
+  <ul tag='advance'  <?=$showmeTxt['advance'] ?> >
+  	<li><a  href='?win=index&view=admin'>账号管理</a></li>
+  	<li><a  href='?win=index&view=restore' >备份/恢复</a></li>  	
+		<li><a  href='?win=index&view=alipay'>支付设置</a></li>
+		<li><a  href='?win=index&view=ship'>物流费用</a></li>
+		<li><a  href='?win=index&view=shipnames'>物流查询</a></li>
+  </ul>
+  
+</div>
+<div class=clear> </div>
+
+<script>
+	$('.topleftmenu .tag').click(function(){
+		var tag = $(this).attr('tag');
+		if($(this).attr('isshow')=='1')
+		{  $('.topleftmenu ul[tag=' + tag +']').hide();
+			 $(this).attr('isshow','0');
+		}	else{
+		   $('.topleftmenu ul[tag=' + tag +']').show();
+		   $(this).attr('isshow','1');
+		}
+		
+	});
+</script>

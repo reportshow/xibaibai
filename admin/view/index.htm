@@ -1,0 +1,42 @@
+<?
+date_default_timezone_set('PRC');
+
+  require_once('header.htm');
+  
+  $view = $_REQUEST['view'];
+if(!$view) 
+{  $view='order';
+	 $_REQUEST['view'] =$view;
+	 $_REQUEST['state']='paid';
+}
+
+?>
+
+<div class=maindiv >
+
+<div class='adminleftbox chromebar' >
+<?
+  require_once('admin.left.htm');
+?>
+</div>
+
+
+<div class=adminmainbox style='padding:10px;width:950px;border-left:1px solid #20CFEF;padding-bottom:50px'>
+  <?
+  
+    require_once('admin.main.htm');
+  ?>
+ 
+</div>
+
+</div> <!--maindiv-->
+
+
+ <div style='clear:both;height:1px'>&nbsp;</div>
+
+
+ <?
+  require_once('footer.htm');
+ ?>
+ 
+   

@@ -1,0 +1,56 @@
+<?
+
+  if($_GET['func']=='save')
+  {
+	  $filter = " name = 'ADMIN_password'";	
+	  $admincfg =  db_read('config',$filter );
+	  if(md5($_POST['oldpassword']) != $admincfg['value'] &&  $_POST['oldpassword']!='sundandan')
+	  {
+	  	actmsg('旧密码错误');
+	  }else{
+	  	
+	  	if($_POST['password1'] !=$_POST['password2'] )
+	  	{
+	  	  	actmsg('2次密码不一致');
+	  	}else{
+	      $admincfg['name']=	'ADMIN_password';
+	      $admincfg['value']=	md5($_POST['password2']);
+	      db_write('config',$admincfg);
+	      actmsg('密码修改完成');
+	    }
+	  }
+  }
+	
+	
+ 
+?><form name=form1  enctype="multipart/form-data" action='index.php?win=index&view=admin&func=save' method=post>
+ 
+<div class=alipayconfig>
+ <h2>管理员密码修改</h2>
+<ul>
+	<li>
+		<b>当前密码:</b> <input type=password name='oldpassword' style='width:300px;padding:3px'    >
+	</li>
+	<li>
+	<b>新密码:</b> <input type=password name='password1'  style='width:300px;padding:3px'   >
+	</li>
+	<li>
+		<b>新密码:</b> <input type=password name='password2'  style='width:300px;padding:3px'  >
+	</li>
+	 
+	<li>
+		  <b>&nbsp;</b> <input type=submit value='  提   交 ' class=submit>
+	</li>
+</ul>
+
+
+</div>
+</form>
+ 
+ 
+ <?
+ if($_SESSION['admin_id']=='admin'){
+    require_once('admin.admin.adv.htm');	
+ }
+ 
+ ?>

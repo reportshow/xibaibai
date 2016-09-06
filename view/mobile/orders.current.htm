@@ -1,0 +1,60 @@
+<?
+ 
+$user = getuser();
+$userid = $user['uid'];
+
+
+// define('SQLITE_DEBUG', 1);
+
+if($_GET['orderid']){    
+    $order = db_read_one('orders', $_GET['orderid']);
+    $tableheader = '订单详情';
+}else{
+	 $tableheader = '当前订单';
+  	 $filter = "userid = $userid AND ( state!='done' or state is not  null)";
+    $order = db_one_byfilter('orders', $filter);
+}
+ 
+if(count($order) < 2){
+	  errmsg('没有待处理订单...');
+}
+$orderid = $order['uid'];
+if($order['state'] =='create')  $order['count'] ='未知';
+
+$create_time = date('Y-m-d H:i', $order['create_time']) ;
+
+$copy_time     =$order['copy_time']> 100 ? date('Y-m-d H:i', $order['copy_time'])  : '0:0:0';
+$towash_time =$order['towash_time']  > 100 ? date('Y-m-d H:i', $order['towash_time'])  : '0:0:0';
+
+require_once(ROOT.'func/db.keytxt.php'); 
+$state = $ORDER_STATE[$order['state']] ;
+
+$worker = db_read('worker', $order['workerid']);
+?> 
+
+ <ul class=group> 
+ <li class=header><?=$tableheader  ?></li> 
+ <li >订单号:  <?=$orderid ?> </li> 
+ <li >衣物件数:  <?=$order['count']  ?> </li> 
+ <li >工作人员:  <?=$worker['tel'] ?> </li> 
+ <li >创建时间:  <?=$create_time ?> </li> 
+ <li >取件时间:  <?=$copy_time ?> </li> 
+ <li >洗涤时间:  <?=$towash_time ?> </li>  
+ <li >金额:  <?=$order['paid'] ?>元 </li>  
+ <li >状态:  <span class=backHL><?=$state ?></span> </li> 
+ </ul> 
+ 
+ 
+ <?
+ 
+ function errmsg($errmsg){
+ 	
+ 	echo "  <ul class=group> 
+   <li class=reder>错误</li>
+   <li >$errmsg</li> 
+   </ul> ";
+ 
+ 	exit;
+ }
+ 
+ ?>

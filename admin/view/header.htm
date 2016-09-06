@@ -1,0 +1,30 @@
+<?
+require_once('head.inc.htm');
+?>
+		
+	
+	
+	<div style='margin:0px auto;width:1200px'>
+		<div style='float:right;margin-right:100px'>
+			<a href='?' >首页</a> | <a href="act.php?target=auth&amp;act=logout">退出</a> 
+		</div>
+		<img src=view/imgs/logo.png width=60 >
+	    <h1  style='display:inline-block;font-size:24pt; color:#f00'> <?=$GLOBALS['site_code'] ?></h1>
+	</div>
+	
+	
+	<div class=navbarbg>
+	<div style='margin:0px auto;width:1200px'>
+			<div style='float:right;width:80px;text-align:right'>
+		    <span type=button class='yellowbtn' style='padding:5px 15px;font-size:14px  ;margin-top:-0px'  id='printwindow'>打印 </span>
+	      </div>
+	<ul class=list style='margin-left:10px'>
+		<li><a href='?win=index&view=order.changestate&tostate=washing'>批量入店</a></li>
+		<li><a href='?win=index&view=order.changestate&tostate=clean'>批量洗净</a></li>
+		<li><a href='?win=index&view=order.changestate&tostate=back'>批量派送</a></li>  
+		<li><a href='?win=index&view=ship'>高级设置</a></li>
+	</ul>
+		
+	</div>
+	</div>
+  

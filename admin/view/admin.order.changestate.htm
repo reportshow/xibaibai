@@ -1,0 +1,78 @@
+<?
+if($_GET['tostate']=='washing')
+{ $tostateTxt = '批量待洗';    
+}
+if($_GET['tostate']=='clean')
+{$tostateTxt = '批量标记为干净';}
+if($_GET['tostate']=='back')
+{$tostateTxt = '批量派件';}
+
+
+if($_GET['dofunc']=='save'){
+
+	$ordertostate = $_POST['ordertostate'];
+	$orderids = $_POST['orderids'];
+	$idlist = explode("\n",$orderids);
+	 
+	 $history = $_POST['history'] . implode('; ',$idlist).';';
+	 $history = strtr($history , array("\r"=>''));
+	 
+	 $jsonM = array();
+	foreach($idlist as $id){
+		$id=trim($id);
+		if(!$id) continue;
+		
+		$ord = db_read('orders', $id+0);
+		if(count($ord) < 2) continue;
+		
+		$ord['state'] = $ordertostate;
+		 
+		db_write('orders', $ord);
+		$alertmsg =$tostateTxt. 'OK';
+		
+		
+		//push to app		
+		 $cg = array();
+		$cg['orderid']=$id;
+		$cg['state']= $ordertostate;
+		$jsonM[] = $cg;
+	}
+	require_once(ROOT."act/pushupdate.php");
+	multi_pushstate($jsonM);
+	
+}
+?>
+<form action='?win=index&view=order.changestate&tostate=washing&dofunc=save' method=post>
+<DIV style='margin-left:200px;'>
+
+<br><input type=hidden name=ordertostate value='<?=$_GET['tostate'] ?>'>
+订单ID：<span style='color:#999'>(每个id一行)</span><br>
+<textarea  name=orderids style='width:300px;height:280px;border:1px solid #ccc;font-size:14pt;font-weight:bold;color:#f50;font-family:Arial'
+></textarea>
+
+<div style='margin-top:20px'>
+<img src=view/imgs/ic_<?=$_GET['tostate']?>.png   style='width:80px;margin-top:-20px' >
+<input type=submit class='yellowbtn btnbig'    
+style="padding: 15px 20px; background:#f50;  font-size:12pt; height:auto;vertical-align:top;
+		-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+       -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+        box-shadow: rgba(172,93,84, 0.5) 0px 2px 3px ; "
+        
+value='<?=$tostateTxt ?>' > 
+</div>
+ 
+<textarea  name=history  style='display:block;width:300px;height:280px;color:#666;font-size:12pt;border:0px;overflow-y:auto;'><?=$history ?>
+</textarea>
+ 
+
+</DIV>
+</form>
+
+<STYLE>
+	.btnbig{padding: 10px;  font-size:14pt;
+		padding: 15px 20px; background:#f50;  font-size:12pt; height:auto;vertical-align:top;
+		-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+       -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+        box-shadow: rgba(172,93,84, 0.5) 0px 1px 3px ;
+   }
+</style>
