@@ -1,5 +1,6 @@
-<?
-error_reporting(E_ALL^E_NOTICE);
+<?php
+   
+  error_reporting(E_ALL^E_NOTICE);
   define ('ROOT', dirname('../global.php').'/'); 
   //require_once('../func/weixin.config.php');
   require_once(ROOT.'public/weixin/weixin.func.php');
@@ -7,50 +8,56 @@ error_reporting(E_ALL^E_NOTICE);
 
  
 
-  if($_GET['token'] != 'afjwljeioioo33')
+  if($_GET['token'] != 'afjwljeioioo33' && $argv[1]!='afjwljeioioo33')
   exit('Token fail.');
   
 
   
-  $json = '{
-     "button":[     
-       {  
-               "type":"click",
-               "name":"下单",
-              "key":"ORDER"           
-          
-       },        
-      {
-           "name":"我的..",
+  $json = '{ "button": [ 
+       {
+           "name":"我的报告",
            "sub_button":[
 	           {	
 	               "type":"view",
-	               "name":"当前订单",
+	               "name":"查看报告",
 	               "url":"http://ding.scicompound.com/xibaibai/action.php?win=orders&sub=current"
 	            },
 	            {
 	               "type":"view",
-	               "name":"历史订单",
+	               "name":"上传图片",
 	               "url":"http://ding.scicompound.com/xibaibai/action.php?win=orders&sub=history"
 	            },
-	            {
-	               "type":"view",
-	               "name":"我的账户",
-	               "url":"http://ding.scicompound.com/xibaibai/action.php?win=me&sub=profile"
-	            },
-	            {
-	               "type":"view",
-	               "name":"手机绑定/解绑",
-	               "url":"http://ding.scicompound.com/xibaibai/action.php?win=me&sub=profile"
-	            }
+              {
+                 "type":"view",
+                 "name":"我的图片",
+                 "url":"http://ding.scicompound.com/xibaibai/action.php?win=orders&sub=history"
+              } 
+	             
             ]
        },
+
+        {
+           "name":"记事本",
+           "sub_button":[
+            { 
+               "type":"view",
+               "name":"新建记事",
+               "url":"http://ding.scicompound.com/xibaibai/action.php?win=about&sub=price"
+            },
+           {  
+               "type":"view",
+               "name":"查看记事",
+               "url":"http://ding.scicompound.com/xibaibai/action.php?win=about&sub=promise"
+            } 
+            ]
+       },
+
       {
-           "name":"关于校园宝",
+           "name":"检测流程",
            "sub_button":[
             {	
                "type":"view",
-               "name":"价格列表",
+               "name":"检测流程",
                "url":"http://ding.scicompound.com/xibaibai/action.php?win=about&sub=price"
             },
            {	

@@ -1,4 +1,4 @@
-<?
+<?php
 
  
 function wechat_events($postObj){
